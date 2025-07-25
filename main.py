@@ -2,13 +2,9 @@
 """Main entry point for Terminal Control MCP Server"""
 
 import os
-import signal
-import sys
-import atexit
-import asyncio
 
 from terminal_control_mcp.logging_config import setup_logging
-from terminal_control_mcp.server import mcp, sessions, cleanup_all_sessions
+from terminal_control_mcp.server import mcp
 
 
 def main():

@@ -30,7 +30,8 @@ class XTermSession:
         # Display settings
         self.display_width = max(1024, width * 12)  # Approximate pixel width
         self.display_height = max(768, height * 20)  # Approximate pixel height
-        self.display = f":99{self.session_id[-3:]}"  # Unique display per session
+        # Find a free display number
+        self.display = self._find_free_display()
 
         # Process handles
         self.xvfb_proc: Optional[asyncio.subprocess.Process] = None
@@ -39,6 +40,19 @@ class XTermSession:
         # State tracking
         self.is_running = False
         self.temp_dir = None
+
+    def _find_free_display(self, start: int = 100, max_attempts: int = 100) -> str:
+        """Find a free X11 display number by checking socket files"""
+        for display_num in range(start, start + max_attempts):
+            socket_path = f"/tmp/.X11-unix/X{display_num}"
+            if not os.path.exists(socket_path):
+                logger.debug(f"Found free display: :{display_num}")
+                return f":{display_num}"
+        
+        # Fallback to a high number if all checked ports are taken
+        fallback_display = start + max_attempts
+        logger.warning(f"All displays {start}-{start + max_attempts - 1} appear taken, using :{fallback_display}")
+        return f":{fallback_display}"
 
     async def start(self):
         """Start the virtual display and xterm session"""
@@ -71,15 +85,17 @@ class XTermSession:
         ]
 
         self.xvfb_proc = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL
+            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
 
         # Wait for display to start
         await asyncio.sleep(2)
 
         if self.xvfb_proc.returncode is not None:
+            _, stderr = await self.xvfb_proc.communicate()
+            error_msg = stderr.decode() if stderr else "No stderr output"
             raise RuntimeError(
-                f"Xvfb failed to start with return code {self.xvfb_proc.returncode}"
+                f"Xvfb failed to start with return code {self.xvfb_proc.returncode}: {error_msg}"
             )
 
     async def _start_xterm(self):
@@ -139,7 +155,7 @@ class XTermSession:
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                 )
-                stdout, stderr = await proc.communicate()
+                stdout, _ = await proc.communicate()
 
                 if proc.returncode == 0:
                     window_id = stdout.decode().strip().split("\n")[0]
@@ -250,7 +266,7 @@ class XTermSession:
                 stdout=asyncio.subprocess.DEVNULL,
                 stderr=asyncio.subprocess.PIPE,
             )
-            stdout, stderr = await proc.communicate()
+            _, stderr = await proc.communicate()
 
             if proc.returncode != 0:
                 error_msg = stderr.decode() if stderr else "Unknown error"
