@@ -1,8 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
-name = "terminal-control-mpc"
+name = "terminal-control-mcp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Terminal Control MCP Server - Model Context Protocol server for terminal interaction via virtual X11 display"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "fastmcp>=0.1.0",
+    "pillow",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/terminal_control_mcp"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.5",
 ]

@@ -52,3 +52,8 @@ The system uses a **virtual X11 display approach** rather than direct TTY manipu
 - `examples/example_htop.py` serves as the reference implementation and working proof of concept
 - Project uses modern Python packaging with `pyproject.toml` and uv package manager
 - System must have X11 tools installed: `apt-get install xvfb xterm xdotool imagemagick`
+
+## Task Management Workflow
+
+- **Mark tasks as completed when finishing a task in TASKS.md**
+- **Always run `uv run ruff check --fix` after finishing a task**

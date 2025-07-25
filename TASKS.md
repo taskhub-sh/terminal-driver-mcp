@@ -17,7 +17,6 @@ Based on `examples/example_htop.py`, the system uses:
 - [ ] Configure pyproject.toml with required dependencies (FastMCP, asyncio, subprocess for system calls)
 - [ ] Create main module structure: `terminal_control_mcp/` with `__init__.py`, `server.py`, `xterm_session.py`
 - [ ] Set up basic logging configuration for debugging and monitoring
-- [ ] Ensure system dependencies: Xvfb, xterm, xdotool, ImageMagick (import command)
 
 ### 2. MCP Server Foundation
 - [ ] Implement basic FastMCP server setup in `server.py` with proper initialization
