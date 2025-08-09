@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that enables AI agents to interact with terminal-based TUI applications through a virtual X11 display approach.
 
+<a href="https://glama.ai/mcp/servers/@taskhub-sh/terminal-driver-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@taskhub-sh/terminal-driver-mcp/badge" alt="Terminal Control MCP server" />
+</a>
+
 ## Overview
 
 This project provides a comprehensive solution for controlling terminal applications programmatically using:
